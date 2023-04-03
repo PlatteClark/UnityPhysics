@@ -30,10 +30,24 @@ public class ControllerCharacter : MonoBehaviour
 		{
 			velocity.x = direction.x * speed;
 			velocity.z = direction.z * speed;
+
+			if(velocity.y < 0) { velocity.y = 0; }
+			if (Input.GetButtonDown("Jump"))
+			{
+				velocity.y += Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
+			}
 		}
+
+		velocity.y += Physics.gravity.y * Time.deltaTime;
 
 		// move character
 		characterController.Move(velocity * Time.deltaTime);
+
+		Vector3 face = new Vector3(velocity.x, 0, velocity.z);
+		if(face.magnitude > 0)
+		{
+			transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(face), Time.deltaTime * turnRate);
+		}
 	}
 
 	void OnControllerColliderHit(ControllerColliderHit hit)
